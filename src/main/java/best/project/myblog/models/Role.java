@@ -1,42 +1,37 @@
 package best.project.myblog.models;
 
 import lombok.*;
+import org.springframework.security.access.method.P;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity
 @Data
-@AllArgsConstructor @RequiredArgsConstructor
-@ToString(of = {"id", "roleName"})
+@AllArgsConstructor @NoArgsConstructor
+@ToString(of = {"roleName"})
 public class Role{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    @NonNull
-    @ElementCollection(targetClass = Permission.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "role_permissions",
-                    joinColumns = @JoinColumn(name = "role_id"))
-    @Enumerated(EnumType.STRING)
     private Set<Permission> permissions;
 
     @NonNull
-    @Column(name = "role_name", unique = true)
     private String roleName;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<User> users;
-
-    public Role() {
+    public Role(@NonNull String roleName) {
+        this.roleName = roleName;
+        this.permissions = new HashSet<>();
+        if(roleName.equals("USER")){
+            permissions.add(Permission.USER_READ);
+        }
+        if(roleName.equals("ADMIN")){
+            permissions.addAll(Arrays.asList(Permission.USER_READ, Permission.USER_WRITE));
+        }
     }
 
-
-
-   public Set<SimpleGrantedAuthority> getAuthorities(){
+    public Set<SimpleGrantedAuthority> getAuthorities(){
         return permissions.stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toSet());
