@@ -2,7 +2,9 @@ begin transaction;
 
 drop sequence if exists blog_sequence;
 
-create sequence blog_sequence start 1 increment 1;
+create sequence blog_sequence
+    start 1
+    increment 1;
 
 create table role (
     id int4 not null,

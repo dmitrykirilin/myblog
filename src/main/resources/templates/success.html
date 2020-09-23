@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Home page</title>
 </head>
 <body>
 <h1>Wellcome to MyBlog home page!</h1>
+<p>This is your JW Token!</p>
+
+<div th:if="${not #strings.isEmpty(Authorization)}" th:text="${Authorization}"></div>
+<br />
+
 <form action="/auth/logout" method="post">
     <button type="submit">Logout</button>
 </form>
